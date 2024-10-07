@@ -22,6 +22,6 @@ import Preview from "@/componants/Preview.vue";
 
 export default {
     name: "EditorLayout",
-    components: {Preview, Controller, ActionLeft, ActionTop},
+    components: {Preview, Controller, ActionLeft, ActionTop}
 }
 </script>

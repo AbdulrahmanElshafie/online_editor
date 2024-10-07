@@ -17,9 +17,9 @@
         <p class="text-main-color">
             Layer Explorer
         </p>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item" v-for="item in svgItems" :key="item">{{ item.name }}</li>
-        </ul>
+        <h2>
+            {{ draw }}
+        </h2>
     </div>
 </template>
 
@@ -27,8 +27,10 @@
 
 export default {
     name: 'LayerController',
-    props: {
-        svgItems: Array
-    },
+    computed: {
+        draw() {
+            return this.$store.state.draw;
+        }
+    }
 }
 </script>

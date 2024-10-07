@@ -10,14 +10,8 @@
 
 <template>
     <div class="controller py-4 px-2">
-        <LayerController
-            :svgItems="[{name: 'Karim Magdy Abdelhady'}]"
-            v-if="!selectedItem"
-        ></LayerController>
-        <TextController
-            :svgItem="{name: 'Karim Magdy Abdelhady'}"
-            v-if="selectedItem & selectedItemType === 'text'"
-        ></TextController>
+        <LayerController></LayerController>
+        <TextController></TextController>
     </div>
 </template>
 
@@ -28,11 +22,5 @@ import LayerController from "@/componants/controllers/LayerController.vue";
 export default {
     name: "Controller",
     components: {LayerController, TextController},
-    data() {
-        return {
-            selectedItem: null,
-            selectedItemType: 'text',
-        }
-    },
 }
 </script>
