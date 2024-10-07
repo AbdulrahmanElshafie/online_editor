@@ -39,13 +39,11 @@ import axios from "axios";
 
 export default {
     name: "Preview",
-    data() {
-        return {
-            draw: null,
-            initialDraw: null,
+    computed: {
+        draw() {
+            return this.$store.state.draw;
         }
     },
-
     methods: {
         zoom(e) {
             const currentZoomValue = `${e.currentTarget.value}%`;
@@ -53,7 +51,7 @@ export default {
         },
         initialize() {
             if (!this.draw) {
-                this.draw = new SVG().addTo('#preview').size("100%", "100%");
+                const draw = new SVG().addTo('#preview').size("100%", "100%");
                 const url = document.getElementById('url');
                 if (url.value) {
                     axios.get(url.value, {
@@ -68,26 +66,26 @@ export default {
                         const viewBox = svgElement.getAttribute("viewBox");
                         const defaultViewBox = "0 0 1080 1080";
                         if (viewBox) {
-                            this.draw.viewbox(viewBox);
+                            draw.viewbox(viewBox);
                         } else {
-                            this.draw.viewbox(defaultViewBox);
+                            draw.viewbox(defaultViewBox);
                         }
-                        this.draw.svg(svgElement.innerHTML);
+                        draw.svg(svgElement.innerHTML);
                     }).catch(error => {
                         console.log(error);
                     }).finally(() => {
-                        this.initialDraw = this.draw;
-                        this.draw.find('image').each((item) => {
-                            // item.draggable();
-                            item.select({
-                                createHandle: (group) => group.rect(10, 10).css({fill: "red"}),
-                                updateHandle: (shape, p) => shape.center(p[0], p[1]),
-                            }).resize();
-                        })
+                        this.$store.dispatch('setDraw', draw)
+                        // this.draw.find('image').each((item) => {
+                        //     // item.draggable();
+                        //     item.select({
+                        //         createHandle: (group) => group.rect(10, 10).css({fill: "red"}),
+                        //         updateHandle: (shape, p) => shape.center(p[0], p[1]),
+                        //     }).resize();
+                        // })
                     });
                 }
             }
         },
-    },
+    }
 }
 </script>
