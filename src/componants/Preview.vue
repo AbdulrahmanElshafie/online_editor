@@ -25,7 +25,7 @@
         <div id="viewport" class="d-flex align-items-center justify-content-center">
             <label class="w-100">
                 Zoom
-                <input @change="zoom" type="range" class="form-range" min="100" max="500" step="25">
+                <input @change="zoom" type="range" class="form-range" min="25" max="500" step="25">
             </label>
         </div>
     </div>
@@ -42,6 +42,9 @@ export default {
     computed: {
         draw() {
             return this.$store.state.draw;
+        },
+        selectedElement() {
+            return this.$store.state.selectedElement;
         }
     },
     methods: {
@@ -51,7 +54,7 @@ export default {
         },
         initialize() {
             if (!this.draw) {
-                const draw = new SVG().addTo('#preview').size("100%", "100%");
+                const draw = new SVG().size("100%", "100%");
                 const url = document.getElementById('url');
                 if (url.value) {
                     axios.get(url.value, {
@@ -74,18 +77,18 @@ export default {
                     }).catch(error => {
                         console.log(error);
                     }).finally(() => {
-                        this.$store.dispatch('setDraw', draw)
-                        // this.draw.find('image').each((item) => {
-                        //     // item.draggable();
-                        //     item.select({
-                        //         createHandle: (group) => group.rect(10, 10).css({fill: "red"}),
-                        //         updateHandle: (shape, p) => shape.center(p[0], p[1]),
-                        //     }).resize();
-                        // })
+                        draw.addTo('#preview');
+                        this.$store.dispatch('setDraw', draw);
+                        this.$store.dispatch('setSelectedElement', null);
                     });
                 }
             }
-        },
+        }
+    },
+    mounted() {
+        if (this.draw) {
+            this.draw.addTo('#preview');
+        }
     }
 }
 </script>

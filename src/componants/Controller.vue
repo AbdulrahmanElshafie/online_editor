@@ -10,8 +10,8 @@
 
 <template>
     <div class="controller py-4 px-2">
-        <LayerController></LayerController>
-        <TextController></TextController>
+        <TextController v-if="actionBar === 'EditController'" :textElement="selectedElement"></TextController>
+        <LayerController v-if="actionBar === 'LayerController'"></LayerController>
     </div>
 </template>
 
@@ -22,5 +22,16 @@ import LayerController from "@/componants/controllers/LayerController.vue";
 export default {
     name: "Controller",
     components: {LayerController, TextController},
+    computed: {
+        draw() {
+            return this.$store.state.draw;
+        },
+        selectedElement() {
+            return this.$store.state.selectedElement;
+        },
+        actionBar() {
+            return this.$store.state.actionBar;
+        }
+    },
 }
 </script>
