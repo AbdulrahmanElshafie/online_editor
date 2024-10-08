@@ -35,19 +35,19 @@
         class="actions-left py-4 px-2">
         <div
             class="wrapper bg-color-3 d-flex align-items-center justify-content-center flex-xxl-column flex-xl-column flex-md-column flex-sm-row flex-row">
-            <a role="button" @click="actionLiftToggle"
+            <a role="button" @click="actionLiftToggle" data-bs-controls="LayerAddController"
                class="actions-left-item link-square-40 d-flex align-items-center justify-content-center p-0 m-1">
                 <i class="fa-solid fa-plus"></i>
             </a>
-            <a role="button" @click="actionLiftToggle"
-               class="actions-left-item link-square-40 d-flex align-items-center justify-content-center p-0 m-1">
+            <a role="button" @click="actionLiftToggle" data-bs-controls="LayerController"
+               class="actions-left-item active link-square-40 d-flex align-items-center justify-content-center p-0 m-1">
                 <i class="fa-solid fa-layer-group"></i>
             </a>
-            <a role="button" @click="actionLiftToggle"
-               class="actions-left-item active link-square-40 d-flex align-items-center justify-content-center p-0 m-1">
+            <a role="button" @click="actionLiftToggle" data-bs-controls="EditController"
+               class="actions-left-item link-square-40 d-flex align-items-center justify-content-center p-0 m-1">
                 <i class="fa-solid fa-sliders"></i>
             </a>
-            <a role="button" @click="actionLiftToggle"
+            <a role="button" @click="actionLiftToggle" data-bs-controls="MagicController"
                class="actions-left-item link-square-40 d-flex align-items-center justify-content-center p-0 m-1">
                 <i class="fa-solid fa-hand-sparkles"></i>
             </a>
@@ -57,12 +57,18 @@
 <script>
 export default {
     name: "ActionLeft",
+    computed: {
+        actionBar() {
+            return this.$store.state.actionBar;
+        }
+    },
     methods: {
         actionLiftToggle(e) {
             document.querySelectorAll('.actions-left-item').forEach((item) => {
                 item.classList.remove('active');
             });
             e.currentTarget.classList.add('active');
+            this.$store.dispatch('setActionBar', e.currentTarget.getAttribute('data-bs-controls'));
         },
     }
 }
