@@ -18,6 +18,7 @@
 <script>
 import TextController from "@/componants/controllers/TextController.vue";
 import LayerController from "@/componants/controllers/LayerController.vue";
+import ImageController from "@/componants/controllers/ImageController.vue";
 
 export default {
     name: "Controller",

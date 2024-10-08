@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';
 import './assets/style.css';
 import '@svgdotjs/svg.select.js/src/svg.select.css';
+import '@flaticon/flaticon-uicons/css/all/all.css';
 
 import {createApp} from 'vue';
 import {createStore} from 'vuex'
