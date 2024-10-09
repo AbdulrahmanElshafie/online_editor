@@ -41,21 +41,21 @@
                             <div class="card-title">Transform</div>
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="input-group p-2">
-                                    <input type="number" class="form-control" @input="setTransform(tx=$event.target.value)">
+                                    <input type="number" class="form-control" id="translateX" @input="setTransform($event.target.value)" :value="imageElement.transform('translateX')">
                                     <span class="input-group-image image-secondary bg-transparent">X</span>
                                 </div>
                                 <div class="input-group p-2">
-                                    <input type="number" class="form-control" @input="setTransformY(ty=$event.target.value)">
+                                    <input type="number" class="form-control" id="translateY" @input="setTransform(undefined, $event.target.value)"  :value="imageElement.transform('translateY')">
                                     <span class="input-group-image image-secondary bg-transparent">Y</span>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="input-group p-2">
-                                    <input type="number" class="form-control" @input="setTransformW(scaleX$event.target.value)">
+                                    <input type="number" class="form-control" @input="resize(null, $event.target.value)" :value="imageElement.width()">
                                     <span class="input-group-image image-secondary bg-transparent">W</span>
                                 </div>
                                 <div class="input-group p-2">
-                                    <input type="number" class="form-control" @input="setTransformH(scaleY=$event.target.value)">
+                                    <input type="number" class="form-control" @input="resize($event.target.value, null)" :value="imageElement.height()">
                                     <span class="input-group-image image-secondary bg-transparent">H</span>
                                 </div>
                             </div>
@@ -66,11 +66,11 @@
                                 <div class="card-title">Flip</div>
                                 <div class="input-group p-2">
                                     <button class="btn btn-secondary" id="flip-horizontal" data-bs-toggle="tooltip" 
-                                    title="Flip Horizontal" @click="setTransform(flipH=true)">
+                                    title="Flip Horizontal" @click="flipy()">
                                         <i class="fi fi-rr-reflect-horizontal"></i>
                                     </button>
                                     <button class="btn btn-secondary" id="flip-vertical" data-bs-toggle="tooltip"
-                                    title="Flip Vertical" @click="setTransform(flipV=true)">
+                                    title="Flip Vertical" @click="flipx()">
                                         <i class="fi fi-rr-reflect-vertical"></i>
                                     </button>
                                 </div>
@@ -79,7 +79,7 @@
                             <div>
                                 <div class="card-title">Rotate</div>
                                 <div class="input-group p-2">
-                                    <input type="number" class="form-control" @input="setTransform(rotation=$event.target.value)">
+                                    <input type="number" class="form-control" @input="rotate($event.target.value)" :value="this.imageElement.transform('rotate')">
                                     <span class="input-group-image image-secondary bg-transparent">
                                         <i class="suffix">o</i>
                                     </span>
@@ -110,7 +110,8 @@
                             <div class="card-title">Transparency</div>
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="input-group p-2">
-                                    <input type="range" class="form-range" min="0" max="100" value="100" @input="setTransparency($event.target.value)">
+                                    <input type="range" class="form-range" min="0" max="100" value="100" @input="setTransparency($event.target.value)"
+                                    :value="this.imageElement.opacity()">
                                 </div>
                             </div>
                         </div>
@@ -119,20 +120,12 @@
             </div>
         </div>
         <div>
-        
-        <div class="card card-body">
-            <p class="text-main-color card-title">Fill</p>
-            <div class="d-flex align-items-center justify-content-start">
-                <span class="input-group-text text-secondary bg-transparent border-0">Color</span>
-                <input type="color" class="form-control p-1 list-square-40" @input="setColor($event.target.value)"/>
-            </div>
-        </div>
 
         <div class="card card-body">
             <p class="text-main-color card-title">Border</p>
             <div class="d-flex align-items-center justify-content-start">
-                <input type="color" class="form-control p-1 list-square-40" @input="setBorder(color=$event.target.value)"/>
-                <input type="number" class="form-control p-1 list-square-40" id="BorderSizeInput" min="0" value="0" list="BorderSizeOptions" @input="setBorder(width=$event.target.value)"/>
+                <input type="color" class="form-control p-1 list-square-40" id="BorderColor" @input="setBorder()" value='#000000'/>
+                <input type="number" class="form-control p-1 list-square-40" id="BorderWidth" min="0" value="0" list="BorderSizeOptions" @input="setBorder()"/>
                 <datalist id="BorderSizeOptions">
                     <option value="2"></option>
                     <option value="4"></option>
@@ -142,7 +135,7 @@
                     <option value="12"></option>
                     <option value="14"></option>
                 </datalist>
-                <select class="form-control p-1 list-square-40" @input="setBorder(style=$event.target.value)">
+                <select class="form-control p-1 list-square-40" id="BorderStyle" @input="setBorder()" value="Normal">
                     <option value="Normal">Normal</option>
                     <option value="Dotted">Dotted</option>
                     <option value="Dashed">Dashed</option>
@@ -150,23 +143,24 @@
             </div>
         </div>
 
-        <div class="card card-body">
+        <!-- <div class="card card-body">
+            SHADOW BOX
             <p class="text-main-color card-title">Shadow</p>
             <div class="d-flex align-items-center justify-content-start">
                 
-                <input type="color" class="form-control p-1 list-square-40" @input="setShadow(color=$event.target.value)"/>
-                <input type="number" class="form-control p-1 list-square-40" min="1" value="1" @input="setShadow(x=$event.target.value)"/>
+                <input type="color" class="form-control p-1 list-square-40" id="ShadowColor" @input="setShadow()" value='#000000'/>
+                <input type="number" class="form-control p-1 list-square-40" id="ShadowX" min="1" value="1" @input="setShadow()"/>
                 <i class="suffix">X</i>
-                <input type="number" class="form-control p-1 list-square-40" min="1" value="1" @input="setShadow(y=$event.target.value)"/>
+                <input type="number" class="form-control p-1 list-square-40" id="ShadowY" min="1" value="1" @input="setShadow()"/>
                 <i class="suffix">Y</i>
-                <input type="number" class="form-control p-1 list-square-40" min="1" value="1" @input="setShadow(blur=$event.target.value)"/>
+                <input type="number" class="form-control p-1 list-square-40" id="ShadowBlur" min="1" value="1" @input="setShadow()"/>
                 <i class="suffix">Blur</i>
 
             </div>
-        </div>
+        </div> -->
         
-        <div class="card card-body">
-
+        <!-- <div class="card card-body">
+            ALIGN BOX
             <p class="text-main-color card-title">Align</p>
         <div class="btn-group" role="group" aria-label="Text alignment">
             <button
@@ -202,19 +196,23 @@
             </button>
         </div>
 
-        </div>
+        </div> -->
 
         </div>
     </div>
 </template>
 
 <script>
+import { flip } from '@popperjs/core';
 import Tooltip from 'bootstrap/js/dist/tooltip';
 
 export default {
     name: 'ImageController',
     props: {
-        svgItem: Object,
+        imageElement: {
+            type: Object,
+            required: true,
+        },
     },
 
     mounted() {
@@ -238,54 +236,98 @@ export default {
         })
     },
     methods: {
+    
         setTransparency(t) {
-            element.opacity(t / 100);
+            this.imageElement.opacity(t / 100);
         },
 
-        setAlignment(alignment) {
-            element.css({
-                "align": alignment
-            })
+        // setAlignment(alignment) {
+        //     this.imageElement.css({
+        //         "align": alignment
+        //     })
+        // },
+
+
+        setTransform(tx, ty) {
+            if (tx == undefined) 
+                tx = 0;
+            else {
+                if (this.imageElement.remember("tx") == undefined)
+                    this.imageElement.remember("tx", tx)
+                else{
+                    var temp_tx = tx;
+                    tx = tx - this.imageElement.remember("tx");
+                    this.imageElement.remember("tx", temp_tx);
+                }
+            }
+            if (ty == undefined) 
+                ty = 0;
+            else {
+                if (this.imageElement.remember("ty") == undefined)
+                    this.imageElement.remember("ty", ty)
+                else{
+                    var temp_ty = ty;
+                    ty = ty - this.imageElement.remember("ty");
+                    this.imageElement.remember("ty", temp_ty);
+                }
+            }
+
+            // this.imageElement.dmove(tx, ty);
+            console.log("tx, ty", tx, ty);
+            this.imageElement.center(this.imageElement.cx() + tx, this.imageElement.cy() + ty);
         },
 
-        setTransform(tx=None, ty=None, scaleX=None, scaleY=None, rotation=None, flipV=false, flipH=false) {
-            tx = tx || element.transform('translateX');
-            ty = ty || element.transform('translateY');
-            scaleX = scaleX || element.transform('scaleX');
-            scaleY = scaleY || element.transform('scaleY');
-            rotation = rotation || element.transform('rotate');
-            element.transform({
-                tx:tx,
-                ty:ty,
-                scaleX:scaleX,
-                scaleY:scaleY,
-                rotation:rotation,
-                flipV:flipV,
-                flipH:flipH
-            })
+        rotate(angle) {
+            console.log("before this.imageElement.transform('rotate')", this.imageElement.transform('rotate'));
+            console.log("before angle", angle);
+            this.imageElement.rotate(this.imageElement.transform('rotate'));
+            console.log("after 1 this.imageElement.transform('rotate')", this.imageElement.transform('rotate'));
+            var rotation_angle = angle - this.imageElement.transform('rotate');
+            console.log("after angle", angle);
+            this.imageElement.rotate(rotation_angle);
+            console.log("after 2 this.imageElement.transform('rotate')", this.imageElement.transform('rotate'));
         },
 
-        setColor(color){
-            element.fill({
+        flipx() {
+            this.imageElement.flip('x');
+        },
+
+        flipy() {
+            this.imageElement.flip('y');
+        },
+
+        resize(height, width) {
+            if (width != undefined){
+                this.imageElement.width(width);
+            }
+            if (height != undefined){
+                this.imageElement.height(height);
+            }
+        },
+
+        setBorder(){
+            var color = document.getElementById("BorderColor").value;
+            var width =  document.getElementById("BorderWidth").value;
+            var style = document.getElementById("BorderStyle").value;
+            console.log(color, width, style)
+            this.imageElement.stroke({
                 color:color,
+                width:width,
+                opacity: 1,
             })
+            this.imageElement.css("border-style", style)
         },
 
-        setBorder(color, width, style){
-            element.stroke({
-                color:color,
-                width:width
-            })
-            element.css({
-                    "border-style": style,
-                })
-        },
-
-        setShadow(color, x, y, blur){
-            element.css({
-                "box-shadow": `${x}px ${y}px ${blur}px ${color}`
-            })  
-        },
+        // setShadow(){
+        //     var color = document.getElementById("ShadowColor").value;
+        //     var x = document.getElementById("ShadowX").value;
+        //     var y = document.getElementById("ShadowY").value;
+        //     var blur = document.getElementById("ShadowBlur").value;
+        //     console.log(color, x, y, blur)
+        //     this.imageElement.css({
+        //         "box-shadow": `${x}px ${y}px ${blur}px ${color}`
+        //     })  
+        // },
 
     }
 }

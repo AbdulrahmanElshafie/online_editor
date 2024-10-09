@@ -10,8 +10,9 @@
 
 <template>
     <div class="controller py-4 px-2">
-        <TextController v-if="actionBar === 'EditController'" :textElement="selectedElement"></TextController>
+        <!-- <TextController v-if="actionBar === 'EditController'" :textElement="selectedElement"></TextController> -->
         <LayerController v-if="actionBar === 'LayerController'"></LayerController>
+        <ImageController v-if="actionBar === 'EditController'" :imageElement="selectedElement"></ImageController>
     </div>
 </template>
 
@@ -22,7 +23,7 @@ import ImageController from "@/componants/controllers/ImageController.vue";
 
 export default {
     name: "Controller",
-    components: {LayerController, TextController},
+    components: {LayerController, TextController, ImageController},
     computed: {
         draw() {
             return this.$store.state.draw;
